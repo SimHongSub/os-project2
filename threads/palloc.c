@@ -61,26 +61,7 @@ palloc_init (size_t user_page_limit)
 
   init_pool (&kernel_pool, free_start, kernel_pages, "kernel pool");
   init_pool (&user_pool, free_start + kernel_pages * PGSIZE,
-             user_pages, "user pool");
-
-  switch (pallocator)
-  {
-  case 0:
-    printf("pallocator 0 check\n");
-    break;
-  case 1:
-    printf("pallocator 1 check\n");
-    break;
-  case 2:
-    printf("pallocator 2 check\n");
-    break;
-  case 3:
-    printf("pallocator 3 check\n");
-    break;
-  default:
-
-    break;
-  }
+             user_pages, "user pool"); 
 }
 
 /* Obtains and returns a group of PAGE_CNT contiguous free pages.
@@ -100,7 +81,26 @@ palloc_get_multiple (enum palloc_flags flags, size_t page_cnt)
     return NULL;
 
   lock_acquire (&pool->lock);
-  page_idx = bitmap_scan_and_flip (pool->used_map, 0, page_cnt, false);
+  /* SimHognSub : Add switch casse to distinguish allocation algorithm */
+  switch (pallocator)
+  {
+  case 0:
+    page_idx = bitmap_scan_and_flip (pool->used_map, 0, page_cnt, false);
+    break;
+  case 1:
+    page_idx = bitmap_scan_and_flip (pool->used_map, 0, page_cnt, false);
+    break;
+  case 2:
+    printf("pallocator 2 check\n");
+    break;
+  case 3:
+    printf("pallocator 3 check\n");
+    break;
+  default:
+
+    break;
+  }
+  //page_idx = bitmap_scan_and_flip (pool->used_map, 0, page_cnt, false);
   lock_release (&pool->lock);
 
   if (page_idx != BITMAP_ERROR)
