@@ -89,7 +89,6 @@ palloc_get_multiple (enum palloc_flags flags, size_t page_cnt)
     page_idx = bitmap_scan_and_flip (pool->used_map, 0, page_cnt, false);
     break;
   case 1:
-    printf("next fit start point : %d\n", next_fit_start);
     page_idx = bitmap_scan_and_flip (pool->used_map, next_fit_start, page_cnt, false);
     break;
   case 2:
@@ -204,8 +203,14 @@ init_pool (struct pool *p, void *base, size_t page_cnt, const char *name)
 
   /* Initialize the pool. */
   lock_init (&p->lock);
-  p->used_map = bitmap_create_in_buf (page_cnt, base, bm_pages * PGSIZE);
-  p->base = base + bm_pages * PGSIZE;
+
+  /* SimHongSub : Add source for Buddy system */
+  if(pallocator == 3){
+
+  }else{
+    p->used_map = bitmap_create_in_buf (page_cnt, base, bm_pages * PGSIZE);
+    p->base = base + bm_pages * PGSIZE;
+  }
 }
 
 /* Returns true if PAGE was allocated from POOL,
