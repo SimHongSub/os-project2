@@ -320,6 +320,10 @@ size_t
 bitmap_scan_and_flip (struct bitmap *b, size_t start, size_t cnt, bool value)
 {
   size_t idx = bitmap_scan (b, start, cnt, value);
+
+  /* SimHongSub : next, best algorithm start point add */
+  next_fit_start = idx + cnt;
+
   if (idx != BITMAP_ERROR) 
     bitmap_set_multiple (b, idx, cnt, !value);
   return idx;

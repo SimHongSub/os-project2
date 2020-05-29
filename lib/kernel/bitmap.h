@@ -5,6 +5,9 @@
 #include <stddef.h>
 #include <inttypes.h>
 
+/* SimHognSub : Next Fit, Best Fit algorithm start point */
+size_t next_fit_start;
+
 /* Bitmap abstract data type. */
 
 /* Creation and destruction. */
