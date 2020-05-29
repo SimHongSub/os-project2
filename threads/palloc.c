@@ -81,6 +81,7 @@ palloc_get_multiple (enum palloc_flags flags, size_t page_cnt)
     return NULL;
 
   lock_acquire (&pool->lock);
+
   /* SimHognSub : Add switch casse to distinguish allocation algorithm */
   switch (pallocator)
   {
@@ -88,10 +89,11 @@ palloc_get_multiple (enum palloc_flags flags, size_t page_cnt)
     page_idx = bitmap_scan_and_flip (pool->used_map, 0, page_cnt, false);
     break;
   case 1:
-    page_idx = bitmap_scan_and_flip (pool->used_map, 0, page_cnt, false);
+    printf("next fit start point : %d\n", next_fit_start);
+    page_idx = bitmap_scan_and_flip (pool->used_map, next_fit_start, page_cnt, false);
     break;
   case 2:
-    printf("pallocator 2 check\n");
+    page_idx = bitmap_scan_and_flip (pool->used_map, 0, page_cnt, false);
     break;
   case 3:
     printf("pallocator 3 check\n");
@@ -100,6 +102,7 @@ palloc_get_multiple (enum palloc_flags flags, size_t page_cnt)
 
     break;
   }
+
   //page_idx = bitmap_scan_and_flip (pool->used_map, 0, page_cnt, false);
   lock_release (&pool->lock);
 
