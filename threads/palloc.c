@@ -93,7 +93,7 @@ palloc_get_multiple (enum palloc_flags flags, size_t page_cnt)
     page_idx = bitmap_scan_and_flip (pool->used_map, next_fit_start, page_cnt, false);
     break;
   case 2:
-    page_idx = bitmap_scan_and_flip (pool->used_map, 0, page_cnt, false);
+    page_idx = best_bitmap_scan_and_flip (pool->used_map, 0, page_cnt, false);
     break;
   case 3:
     printf("pallocator 3 check\n");
