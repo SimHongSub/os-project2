@@ -390,3 +390,66 @@ bitmap_dump2 (const struct bitmap *b)
   }
   printf ("========== bitmap dump end ==========\n");
 }
+
+/* SimHongSub : Add function for Best Fit alogorithm */
+size_t best_bitmap_scan_and_flip (struct bitmap *b, size_t start, size_t cnt, bool value){
+  size_t idx = best_bitmap_scan (b, start, cnt, value);
+
+  if (idx != BITMAP_ERROR){
+    bitmap_set_multiple (b, idx, cnt, !value);
+  }
+    
+  return idx;
+}
+
+size_t best_bitmap_scan (const struct bitmap *b, size_t start, size_t cnt, bool value){
+  ASSERT (b != NULL);
+  ASSERT (start <= b->bit_cnt);
+
+  if (cnt <= b->bit_cnt){
+    size_t last = b->bit_cnt - cnt;
+    size_t i, idx = 0;
+    int size = b->bit_cnt;
+
+    for (i = start; i <= last; i++){
+      if (!bitmap_contains (b, i, cnt, !value)){
+        size_t temp = best_bitmap_size(b, i, cnt, !value);
+        
+        if(temp <= size){
+
+          if(temp != size){
+            size = temp;
+            idx = i;
+          }
+          
+          i += (size - 1);
+        }
+      }
+    }
+
+    return idx;
+  }
+
+  return BITMAP_ERROR;
+}
+
+size_t best_bitmap_size(const struct bitmap *b, size_t start, size_t cnt, bool value){
+
+  size_t last = b->bit_cnt - cnt;
+  int i, size = 1;
+
+  ASSERT (b != NULL);
+  ASSERT (start <= b->bit_cnt);
+
+  for (i = start; i < last; i++){
+    if (bitmap_test (b, i) == value){
+      return size;
+    }else{
+      size++;
+    }
+  }
+
+  if(i == last - 1){
+    return 1;
+  }
+}

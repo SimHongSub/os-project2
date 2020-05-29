@@ -52,5 +52,9 @@ bool bitmap_write (const struct bitmap *, struct file *);
 void bitmap_dump (const struct bitmap *);
 void bitmap_dump2 (const struct bitmap *b);
 
+/* SimHongSub : Add function for Best Fit alogorithm */
+size_t best_bitmap_scan_and_flip (struct bitmap *, size_t start, size_t cnt, bool);
+size_t best_bitmap_scan (const struct bitmap *, size_t start, size_t cnt, bool);
+size_t best_bitmap_size(const struct bitmap *b, size_t start, size_t cnt, bool value);
 
 #endif /* lib/kernel/bitmap.h */
