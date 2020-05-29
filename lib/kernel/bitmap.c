@@ -391,7 +391,7 @@ bitmap_dump2 (const struct bitmap *b)
   printf ("========== bitmap dump end ==========\n");
 }
 
-/* SimHongSub : Add function for Best Fit alogorithm */
+/* SimHongSub : Add function for Best Fit algorithm */
 size_t best_bitmap_scan_and_flip (struct bitmap *b, size_t start, size_t cnt, bool value){
   size_t idx = best_bitmap_scan (b, start, cnt, value);
 
