@@ -461,7 +461,7 @@ static int nodes_cnt = 0;
 
 buddyNode *buddy_first_node = &nodes[0];
 
-size_t buddy_bitmap_scan_and_flip (struct bitmap *b, size_t start, size_t cnt, bool value){
+size_t buddy_bitmap_scan_and_flip (struct bitmap *b, size_t cnt, bool value){
   buddy_index = BITMAP_ERROR;
   int size = 1;
 

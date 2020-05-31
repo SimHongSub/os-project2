@@ -71,7 +71,7 @@ typedef struct buddy_node{
 extern buddyNode *buddy_first_node;
 
 /* SimHongSub : Add function for Buddy system algorithm */
-size_t buddy_bitmap_scan_and_flip (struct bitmap *, size_t start, size_t cnt, bool);
+size_t buddy_bitmap_scan_and_flip (struct bitmap *, size_t cnt, bool);
 size_t buddy_bitmap_scan(buddyNode* node, size_t cnt, size_t alloc_size, int node_size);
 
 #endif /* lib/kernel/bitmap.h */

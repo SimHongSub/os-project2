@@ -104,10 +104,9 @@ palloc_get_multiple (enum palloc_flags flags, size_t page_cnt)
     page_idx = best_bitmap_scan_and_flip (pool->used_map, 0, page_cnt, false);
     break;
   case 3:
-    page_idx = buddy_bitmap_scan_and_flip(pool->used_map, 0, page_cnt, false);
+    page_idx = buddy_bitmap_scan_and_flip(pool->used_map, page_cnt, false);
     break;
   default:
-
     break;
   }
 
