@@ -4,73 +4,34 @@ void alloctest(void)
 {
 	printf("implement page allocation test!!!\n");
 
-	
-	/* SimHongSub : First Fit, Next Fit test code */
-	/*size_t page = palloc_get_multiple(0, 2);
-
-	palloc_get_status(0);
-
-	palloc_free_multiple(page, 1);
-
-	palloc_get_status(0);
-
-	size_t page2 = palloc_get_multiple(0, 1);
-
-	palloc_get_status(0);*/
-
-	/* SimHongSub : Best Fit test code */
-	/*palloc_get_status(0);
-
-	size_t page = palloc_get_multiple(0, 4);
-
-	palloc_get_status(0);
-
-	palloc_free_multiple(page, 3);
-
-	palloc_get_status(0);
-
-	size_t page2 = palloc_get_multiple(0, 4);
-
-	palloc_get_status(0);
-	
-	palloc_free_multiple(page2, 2);
-
-	palloc_get_status(0);
-
-	size_t page3 = palloc_get_multiple(0, 4);
-
-	palloc_get_status(0);
-
-	palloc_free_multiple(page3, 2);
-
-	palloc_get_status(0);
-
-	size_t page4 = palloc_get_multiple(0, 1);
-
-	palloc_get_status(0);*/
-
-	/* SimHongSub : Buddy System test code */
+	/* SimHongSub : Test code */
+	printf("\nInitial state\n");
 	palloc_get_status(0);
 
 	size_t page = palloc_get_multiple(0, 4);
 
+	printf("\nAllocate page cnt 4 state\n");
 	palloc_get_status(0);
 
 	palloc_free_multiple(page, 3);
 
+	printf("\nFree page cnt 3 state\n");
 	palloc_get_status(0);
 
 	size_t page2 = palloc_get_multiple(0, 3);
 
+	printf("\nAllocate page cnt 3 state\n");
 	palloc_get_status(0);
 	
 	palloc_free_multiple(page2, 2);
 
+	printf("\nFree page cnt 2 state\n");
 	palloc_get_status(0);
 
 	size_t page3 = palloc_get_multiple(0, 1);
 
+	printf("\nAllocate page cnt 1 state\n");
 	palloc_get_status(0);
-
-
 }
+
+
