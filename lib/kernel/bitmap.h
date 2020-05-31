@@ -58,8 +58,6 @@ size_t best_bitmap_scan (const struct bitmap *, size_t start, size_t cnt, bool);
 size_t best_bitmap_size(const struct bitmap *b, size_t start, size_t cnt, bool value);
 
 /* SimHongSub : buddy system tree node */
-size_t buddy_index;
-
 typedef struct buddy_node{
     struct buddy_node *left;
     struct buddy_node *right;
@@ -73,5 +71,7 @@ extern buddyNode *buddy_first_node;
 /* SimHongSub : Add function for Buddy system algorithm */
 size_t buddy_bitmap_scan_and_flip (struct bitmap *, size_t cnt, bool);
 size_t buddy_bitmap_scan(buddyNode* node, size_t cnt, size_t alloc_size, int node_size);
+buddyNode* set_child_node(size_t index);
+void set_node_size(buddyNode* node, size_t size, size_t total_size);
 
 #endif /* lib/kernel/bitmap.h */

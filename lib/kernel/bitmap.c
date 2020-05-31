@@ -413,15 +413,13 @@ size_t best_bitmap_scan (const struct bitmap *b, size_t start, size_t cnt, bool 
 
     for (i = start; i <= last; i++){
       if (!bitmap_contains (b, i, cnt, !value)){
-        size_t temp = best_bitmap_size(b, i, cnt, !value);
-        
+        int temp = best_bitmap_size(b, i, cnt, !value);
         if(temp <= size){
-
           if(temp != size){
             size = temp;
             idx = i;
           }
-          
+
           i += (size - 1);
         }
       }
@@ -449,15 +447,13 @@ size_t best_bitmap_size(const struct bitmap *b, size_t start, size_t cnt, bool v
     }
   }
 
-  if(i == last - 1){
-    return 1;
-  }
+  return size;
 }
 
 /* SimHongSub : Add function for Buddy system algorithm */
-
 static buddyNode nodes[1050];
 static int nodes_cnt = 0;
+static size_t buddy_index;
 
 buddyNode *buddy_first_node = &nodes[0];
 
@@ -475,8 +471,6 @@ size_t buddy_bitmap_scan_and_flip (struct bitmap *b, size_t cnt, bool value){
 
   size_t idx = buddy_index;
 
-  printf("buddy index value is %d\n", idx);
-
   if (idx != BITMAP_ERROR){
     bitmap_set_multiple (b, idx, cnt, !value);
   }
@@ -485,8 +479,6 @@ size_t buddy_bitmap_scan_and_flip (struct bitmap *b, size_t cnt, bool value){
 }
 
 size_t buddy_bitmap_scan(buddyNode* node, size_t cnt, size_t alloc_size, int node_size){
-  printf("node size is %d\n", node_size);
-
   if(alloc_size == node_size){
     if(node->used != 1){
       buddy_index = node->index;
@@ -495,61 +487,53 @@ size_t buddy_bitmap_scan(buddyNode* node, size_t cnt, size_t alloc_size, int nod
     }
   }else{
     if(node->left != NULL){
-      if(node->left->used != 1 && node_size/2 - node->left->size >= alloc_size){
+      int remaining_size = node_size/2 - node->left->size;
+
+      if(node->left->used != 1 && remaining_size >= alloc_size){
         buddy_bitmap_scan(node->left, cnt, alloc_size, node_size/2);
 
-        node->size = node->left->size;
-
-        if(node->size == node_size){
-          node->used = 1;
-        }
+        set_node_size(node, node->left->size, node_size);
       }else{
         if(node->right != NULL){
           if(node->right->used != 1){
             buddy_bitmap_scan(node->right, cnt, alloc_size, node_size/2);
 
-            node->size = node->size + node->right->size;
-
-            if(node->size == node_size){
-              node->used = 1;
-            }
+            set_node_size(node, node->size + node->right->size, node_size);
           }
         }else{
-          printf("right node null function start\n");
-          ++nodes_cnt;
-
-          nodes[nodes_cnt].left = NULL;
-          nodes[nodes_cnt].right = NULL;
-          nodes[nodes_cnt].index = node->index + node_size/2;
-          printf("right node index is %d\n", nodes[nodes_cnt].index);
-          nodes[nodes_cnt].size = 0;
-          nodes[nodes_cnt].used = 0;
-
-          node->right = &nodes[nodes_cnt];
+          node->right = set_child_node(node->index + node_size/2);
 
           buddy_bitmap_scan(node->right, cnt, alloc_size, node_size/2);
 
-          node->size = node->size + node->right->size;
-
-          if(node->size == node_size){
-            node->used = 1;
-          }
+          set_node_size(node, node->size + node->right->size, node_size);
         }
       }
     }else{
-      ++nodes_cnt;
-
-      nodes[nodes_cnt].left = NULL;
-      nodes[nodes_cnt].right = NULL;
-      nodes[nodes_cnt].index = node->index;
-      nodes[nodes_cnt].size = 0;
-      nodes[nodes_cnt].used = 0;
-
-      node->left = &nodes[nodes_cnt];
+      node->left = set_child_node(node->index);
 
       buddy_bitmap_scan(node->left, cnt, alloc_size, node_size/2);
 
-      node->size = node->left->size;
+      set_node_size(node, node->left->size, node_size);
     }
+  }
+}
+
+buddyNode* set_child_node(size_t index){
+  ++nodes_cnt;
+
+  nodes[nodes_cnt].left = NULL;
+  nodes[nodes_cnt].right = NULL;
+  nodes[nodes_cnt].index = index;
+  nodes[nodes_cnt].size = 0;
+  nodes[nodes_cnt].used = 0;
+
+  return &nodes[nodes_cnt];
+}
+
+void set_node_size(buddyNode* node, size_t size, size_t total_size){
+  node->size = size;
+
+  if(node->size == total_size){
+    node -> used = 1;
   }
 }
