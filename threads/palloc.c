@@ -55,6 +55,15 @@ palloc_init (size_t user_page_limit)
 
   size_t user_pages = free_pages - 513;
   size_t kernel_pages;
+
+  if(pallocator == 3){
+    buddy_first_node->left = NULL;
+    buddy_first_node->right = NULL;
+    buddy_first_node->index = 0;
+    buddy_first_node->size = 0;
+    buddy_first_node->used = 0;
+  }
+
   if (user_pages > user_page_limit)
     user_pages = user_page_limit;
   kernel_pages = free_pages - user_pages;
@@ -95,7 +104,7 @@ palloc_get_multiple (enum palloc_flags flags, size_t page_cnt)
     page_idx = best_bitmap_scan_and_flip (pool->used_map, 0, page_cnt, false);
     break;
   case 3:
-    printf("pallocator 3 check\n");
+    page_idx = buddy_bitmap_scan_and_flip(pool->used_map, 0, page_cnt, false);
     break;
   default:
 
@@ -204,13 +213,8 @@ init_pool (struct pool *p, void *base, size_t page_cnt, const char *name)
   /* Initialize the pool. */
   lock_init (&p->lock);
 
-  /* SimHongSub : Add source for Buddy system */
-  if(pallocator == 3){
-
-  }else{
     p->used_map = bitmap_create_in_buf (page_cnt, base, bm_pages * PGSIZE);
     p->base = base + bm_pages * PGSIZE;
-  }
 }
 
 /* Returns true if PAGE was allocated from POOL,
