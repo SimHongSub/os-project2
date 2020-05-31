@@ -453,3 +453,103 @@ size_t best_bitmap_size(const struct bitmap *b, size_t start, size_t cnt, bool v
     return 1;
   }
 }
+
+/* SimHongSub : Add function for Buddy system algorithm */
+
+static buddyNode nodes[1050];
+static int nodes_cnt = 0;
+
+buddyNode *buddy_first_node = &nodes[0];
+
+size_t buddy_bitmap_scan_and_flip (struct bitmap *b, size_t start, size_t cnt, bool value){
+  buddy_index = BITMAP_ERROR;
+  int size = 1;
+
+  if(cnt != 1){
+    while(cnt > size){
+      size = size * 2;
+    }
+  }
+
+  buddy_bitmap_scan(buddy_first_node, cnt, size, 512);
+
+  size_t idx = buddy_index;
+
+  printf("buddy index value is %d\n", idx);
+
+  if (idx != BITMAP_ERROR){
+    bitmap_set_multiple (b, idx, cnt, !value);
+  }
+    
+  return idx;
+}
+
+size_t buddy_bitmap_scan(buddyNode* node, size_t cnt, size_t alloc_size, int node_size){
+  printf("node size is %d\n", node_size);
+
+  if(alloc_size == node_size){
+    if(node->used != 1){
+      buddy_index = node->index;
+      node->size = cnt;
+      node->used = 1;
+    }
+  }else{
+    if(node->left != NULL){
+      if(node->left->used != 1 && node_size/2 - node->left->size >= alloc_size){
+        buddy_bitmap_scan(node->left, cnt, alloc_size, node_size/2);
+
+        node->size = node->left->size;
+
+        if(node->size == node_size){
+          node->used = 1;
+        }
+      }else{
+        if(node->right != NULL){
+          if(node->right->used != 1){
+            buddy_bitmap_scan(node->right, cnt, alloc_size, node_size/2);
+
+            node->size = node->size + node->right->size;
+
+            if(node->size == node_size){
+              node->used = 1;
+            }
+          }
+        }else{
+          printf("right node null function start\n");
+          ++nodes_cnt;
+
+          nodes[nodes_cnt].left = NULL;
+          nodes[nodes_cnt].right = NULL;
+          nodes[nodes_cnt].index = node->index + node_size/2;
+          printf("right node index is %d\n", nodes[nodes_cnt].index);
+          nodes[nodes_cnt].size = 0;
+          nodes[nodes_cnt].used = 0;
+
+          node->right = &nodes[nodes_cnt];
+
+          buddy_bitmap_scan(node->right, cnt, alloc_size, node_size/2);
+
+          node->size = node->size + node->right->size;
+
+          if(node->size == node_size){
+            node->used = 1;
+          }
+        }
+      }
+    }else{
+      ++nodes_cnt;
+
+      nodes[nodes_cnt].left = NULL;
+      nodes[nodes_cnt].right = NULL;
+      nodes[nodes_cnt].index = node->index;
+      nodes[nodes_cnt].size = 0;
+      nodes[nodes_cnt].used = 0;
+
+      node->left = &nodes[nodes_cnt];
+
+      buddy_bitmap_scan(node->left, cnt, alloc_size, node_size/2);
+
+      node->size = node->left->size;
+    }
+  }
+}
