@@ -171,6 +171,20 @@ palloc_free_multiple (void *pages, size_t page_cnt)
 
   ASSERT (bitmap_all (pool->used_map, page_idx, page_cnt));
   bitmap_set_multiple (pool->used_map, page_idx, page_cnt, false);
+
+  int size = 1;
+
+  if(page_cnt != 1){
+    while(page_cnt > size){
+      size = size * 2;
+    }
+  }
+
+  int parent_size = size * 2;
+
+  if(pallocator == 3){
+    buddy_bitmap_free(buddy_first_node, page_idx, page_cnt, size);
+  }
 }
 
 /* Frees the page at PAGE. */
