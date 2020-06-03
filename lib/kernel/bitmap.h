@@ -71,7 +71,7 @@ extern buddyNode *buddy_first_node;
 /* SimHongSub : Add function for Buddy system algorithm */
 size_t buddy_bitmap_scan_and_flip (struct bitmap *, size_t cnt, bool);
 size_t buddy_bitmap_scan(buddyNode* node, size_t cnt, size_t alloc_size, int node_size);
-size_t buddy_bitmap_free();
+size_t buddy_bitmap_free(buddyNode* node, size_t idx, size_t cnt, size_t size);
 buddyNode* set_child_node(size_t index);
 void set_node_size(buddyNode* node, size_t size, size_t total_size);
 

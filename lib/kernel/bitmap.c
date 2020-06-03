@@ -29,7 +29,7 @@ struct bitmap
     size_t bit_cnt;     /* Number of bits. */
     elem_type *bits;    /* Elements that represent bits. */
   };
-
+  
 /* Returns the index of the element that contains the bit
    numbered BIT_IDX. */
 static inline size_t
@@ -514,6 +514,43 @@ size_t buddy_bitmap_scan(buddyNode* node, size_t cnt, size_t alloc_size, int nod
       buddy_bitmap_scan(node->left, cnt, alloc_size, node_size/2);
 
       set_node_size(node, node->left->size, node_size);
+    }
+  }
+}
+
+size_t buddy_bitmap_free(buddyNode* node, size_t idx, size_t cnt, size_t size){
+  if(node->size <= size){
+    if(node->index == idx){
+      if(node->size == cnt){
+        node->used = 0;
+        node->size = 0;
+      }
+
+      return 1;
+    }
+
+    return 0;
+  }else{
+    int left_size = node->left->size;
+    int result = buddy_bitmap_free(node->left, idx, cnt, size);
+
+    if(result == 0){
+      int right_size = node->right->size;
+      result = buddy_bitmap_free(node->right, idx, cnt, size);
+
+      printf("right size : %d\n", right_size);
+      printf("node size : %d\n", node->size);
+      printf("result : %d\n", result);
+
+      if(result == 1 && node->right->size == 0){
+        node->size = node->size - right_size;
+        node->used = 0;
+      }
+    }else{
+      if(node->left->size == 0){
+        node->size = node->size - left_size;
+        node->used = 0;
+      }
     }
   }
 }
